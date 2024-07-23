@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
 const corsOptions = {
-  origin: 'https://astonishing-otter-ccff70.netlify.app', // Update this later to restrict to your Netlify URL
+  origin: 'https://sparkly-monstera-ed5717.netlify.app', // Update this later to restrict to your Netlify URL
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
   credentials: true
@@ -80,7 +80,7 @@ mongoose.connect(MONGO_URI, {
     // Set up Socket.io communication
     const io = socketIo(server, {
       cors: {
-        origin: 'https://astonishing-otter-ccff70.netlify.app/', // Update this later to restrict to your Netlify URL
+        origin: 'https://sparkly-monstera-ed5717.netlify.app', // Update this later to restrict to your Netlify URL
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type'],
         credentials: true
