@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
 const corsOptions = {
-  origin: '*', // Update this later to restrict to your Netlify URL
+  origin: 'http://localhost:5173', // Update this later to restrict to your Netlify URL
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
   credentials: true

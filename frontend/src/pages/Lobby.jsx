@@ -9,7 +9,7 @@ const Lobby = () => {
     // Fetch code blocks from the backend
     const fetchCodeBlocks = async () => {
       try {
-        const response = await fetch('http://localhost:3000/codeblocks', {
+        const response = await fetch('https://moveo-test-production.up.railway.app/codeblocks', {
           credentials: 'include'
         });
         const data = await response.json();

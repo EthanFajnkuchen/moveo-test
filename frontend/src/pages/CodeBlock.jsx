@@ -7,7 +7,7 @@ import 'codemirror/theme/material.css'; // Choose a CodeMirror theme you like
 import 'codemirror/mode/javascript/javascript'; // Import the JavaScript mode
 
 // Make sure this socket connection is only established once
-const socket = io('http://localhost:3000', {
+const socket = io('https://moveo-test-production.up.railway.app', {
   withCredentials: true,
   extraHeaders: {
     'my-custom-header': 'abcd'
@@ -27,7 +27,7 @@ const CodeBlock = () => {
     // Fetch code block details
     const fetchCodeBlock = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/codeblock/${id}`, {
+        const response = await fetch(`https://moveo-test-production.up.railway.app/codeblock/${id}`, {
           credentials: 'include'
         });
         const data = await response.json();
@@ -42,7 +42,7 @@ const CodeBlock = () => {
     // Fetch solution
     const fetchSolution = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/solution/${id}`, {
+        const response = await fetch(`https://moveo-test-production.up.railway.app/solution/${id}`, {
           credentials: 'include'
         });
         const data = await response.json();
