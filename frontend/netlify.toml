@@ -1,8 +1,0 @@
-[build]
-command = "npm run dist"
-publish = "build"        # or "dist" if you are using Vite
-
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
