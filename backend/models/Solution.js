@@ -1,17 +1,8 @@
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
-
-const SolutionSchema = new Schema({
-  codeBlockId: {
-    type: Schema.Types.ObjectId,
-    ref: 'CodeBlock',
-    required: true
-  },
-  solution: {
-    type: String,
-    required: true
-  }
+const solutionSchema = new mongoose.Schema({
+  codeBlockId: mongoose.Schema.Types.ObjectId,
+  solution: String,
 });
 
-module.exports = mongoose.model('Solution', SolutionSchema);
+module.exports = mongoose.model('Solution', solutionSchema);
