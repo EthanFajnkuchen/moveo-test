@@ -1,8 +1,8 @@
 [build]
-  command = "npm run build"
-  publish = "build"  # or "dist" if you are using Vite
+command = "npm run dist"
+publish = "build"        # or "dist" if you are using Vite
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
