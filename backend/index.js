@@ -6,7 +6,7 @@ const CodeBlock = require('./models/CodeBlock');
 const Solution = require('./models/Solution');
 const cors = require('cors');
 const corsOptions = {
-  origin: 'http://localhost:5173', // Change to your specific origin
+  origin: '*', // Change to your specific origin
   credentials: true,
   'allowedHeaders': ['sessionId', 'Content-Type'],
   'methods': ['GET','POST'],
@@ -63,7 +63,7 @@ app.get('/solution/:codeBlockId', async (req, res) => {
 // Socket.io setup with CORS options
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:5173', // Change to your specific origin
+    origin: '*', // Change to your specific origin
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true
