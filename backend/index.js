@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
 const corsOptions = {
-  origin: 'https://main--moveo-test.netlify.app', // Update this later to restrict to your Netlify URL
+  origin: 'https://main--moveo-test.netlify.app', 
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
   credentials: true
@@ -22,7 +22,7 @@ app.use(cors(corsOptions));
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000 // Timeout after 5 seconds instead of 30 seconds
+  serverSelectionTimeoutMS: 5000 
 })
   .then(() => {
     console.log('MongoDB connected');
