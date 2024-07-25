@@ -3,10 +3,9 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css'; // Choose a CodeMirror theme you like
-import 'codemirror/mode/javascript/javascript'; // Import the JavaScript mode
+import 'codemirror/theme/material.css'; 
+import 'codemirror/mode/javascript/javascript'; 
 
-// Make sure this socket connection is only established once
 const socket = io('https://moveo-test-production.up.railway.app', {
   withCredentials: true,
   extraHeaders: {
@@ -63,12 +62,10 @@ const CodeBlock = () => {
     // Determine role
     socket.on('role', (role) => {
       setIsMentor(role === 'mentor');
-      console.log(`Role determined: ${role}`);
     });
 
     // Handle code updates
     socket.on('codeUpdate', (newCode) => {
-      console.log(`Code update received: ${newCode}`); // Log for debugging
       setCodeBlock((prev) => ({ ...prev, code: newCode }));
       if (newCode === solution) {
         setShowSmiley(true);

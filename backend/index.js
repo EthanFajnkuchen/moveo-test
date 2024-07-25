@@ -26,105 +26,114 @@ mongoose.connect(MONGO_URI, {
 })
   .then(() => {
     console.log('MongoDB connected');
-
-    // Use a specific database
     const db = mongoose.connection.useDb('testMoveo');
 
-    // Define your models using the specific database
+    // Model declaration for CodeBlock
     const CodeBlock = db.model('CodeBlock', new mongoose.Schema({
       title: String,
       code: String
     }));
 
+    // Model declaration for Solution
+
     const Solution = db.model('Solution', new mongoose.Schema({
       codeBlockId: mongoose.Schema.Types.ObjectId,
       solution: String
     }));
-
-    // Set up your routes
     app.use(express.json());
 
-    app.get('/', (req, res) => {
-      res.send('Server is running');
-    });
+// Express route to check server status
+app.get('/', (req, res) => {
+  res.send('Server is running');
+  // Responds with a simple message to confirm the server is operational
+});
 
-    app.get('/codeblocks', async (req, res) => {
-      try {
-        const codeblocks = await CodeBlock.find();
-        res.json(codeblocks);
-      } catch (err) {
-        res.status(500).json({ message: err.message });
-      }
-    });
+// Route to fetch all code blocks from the database
+app.get('/codeblocks', async (req, res) => {
+  try {
+      const codeblocks = await CodeBlock.find();
+      res.json(codeblocks); // Sends the retrieved code blocks as JSON response
+  } catch (err) {
+      res.status(500).json({ message: err.message }); // Sends an error message if database retrieval fails
+  }
+});
 
-    app.get('/codeblock/:id', async (req, res) => {
-      try {
-        const codeblock = await CodeBlock.findById(req.params.id);
-        if (!codeblock) return res.status(404).json({ message: 'Code block not found' });
-        res.json(codeblock);
-      } catch (err) {
-        res.status(500).json({ message: err.message });
-      }
-    });
+// Route to fetch a specific code block by its ID
+app.get('/codeblock/:id', async (req, res) => {
+  try {
+      const codeblock = await CodeBlock.findById(req.params.id);
+      if (!codeblock) return res.status(404).json({ message: 'Code block not found' });
+      res.json(codeblock); // Sends the specific code block as JSON response
+  } catch (err) {
+      res.status(500).json({ message: err.message }); // Sends an error message if retrieval fails
+  }
+});
 
-    app.get('/solution/:codeBlockId', async (req, res) => {
-      try {
-        const solution = await Solution.findOne({ codeBlockId: req.params.codeBlockId });
-        if (!solution) return res.status(404).json({ message: 'Solution not found' });
-        res.json(solution);
-      } catch (err) {
-        res.status(500).json({ message: err.message });
-      }
-    });
+// Route to fetch a solution associated with a specific code block
+app.get('/solution/:codeBlockId', async (req, res) => {
+  try {
+      const solution = await Solution.findOne({ codeBlockId: req.params.codeBlockId });
+      if (!solution) return res.status(404).json({ message: 'Solution not found' });
+      res.json(solution); // Sends the solution as JSON response
+  } catch (err) {
+      res.status(500).json({ message: err.message }); // Sends an error message if retrieval fails
+  }
+});
 
-    // Set up Socket.io communication
-    const io = socketIo(server, {
-      cors: {
-        origin: 'https://main--moveo-test.netlify.app', // Update this later to restrict to your Netlify URL
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Content-Type'],
-        credentials: true
-      }
-    });
+// Set up Socket.io for real-time communication
+const io = socketIo(server, {
+  cors: {
+      origin: 'https://main--moveo-test.netlify.app', // Update to restrict to the correct URL
+      methods: ['GET', 'POST'],
+      allowedHeaders: ['Content-Type'],
+      credentials: true
+  }
+});
 
-    const roomUsers = {};
+const roomUsers = {}; // Object to track users in each room
 
-    io.on('connection', (socket) => {
-      console.log('New client connected');
+// Handle new client connections
+io.on('connection', (socket) => {
+  console.log('New client connected');
 
-      socket.on('joinRoom', (roomId) => {
-        socket.join(roomId);
-        if (!roomUsers[roomId]) {
+  // Event listener for joining a room
+  socket.on('joinRoom', (roomId) => {
+      socket.join(roomId); // Adds the client to the specified room
+      if (!roomUsers[roomId]) {
           roomUsers[roomId] = [];
-        }
+      }
 
-        const userRole = roomUsers[roomId].length === 0 ? 'mentor' : 'student';
-        roomUsers[roomId].push(socket.id);
+      // Assigns the first user in a room as 'mentor', others as 'students'
+      const userRole = roomUsers[roomId].length === 0 ? 'mentor' : 'student';
+      roomUsers[roomId].push(socket.id);
 
-        socket.emit('role', userRole);
-        console.log(`Client joined room: ${roomId} as ${userRole}`);
-      });
+      socket.emit('role', userRole); // Notifies the client of their role
+      console.log(`Client joined room: ${roomId} as ${userRole}`);
+  });
 
-      socket.on('codeUpdate', (data) => {
-        const { roomId, code } = data;
-        console.log(`Code update received for room ${roomId}: ${code}`);
-        socket.to(roomId).emit('codeUpdate', code);
-      });
+  // Event listener for code updates
+  socket.on('codeUpdate', (data) => {
+      const { roomId, code } = data;
+      console.log(`Code update received for room ${roomId}: ${code}`);
+      socket.to(roomId).emit('codeUpdate', code); // Broadcasts the code update to the room
+  });
 
-      socket.on('disconnect', () => {
-        for (const roomId in roomUsers) {
+  // Handle client disconnection
+  socket.on('disconnect', () => {
+      for (const roomId in roomUsers) {
           roomUsers[roomId] = roomUsers[roomId].filter(id => id !== socket.id);
           if (roomUsers[roomId].length === 0) {
-            delete roomUsers[roomId];
+              delete roomUsers[roomId]; // Removes empty rooms from tracking
           }
-        }
-        console.log('Client disconnected');
-      });
-    });
+      }
+      console.log('Client disconnected');
+  });
+});
 
-    server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
   })
   .catch(err => console.error('MongoDB connection error:', err));
